@@ -55,7 +55,7 @@ def get_books():
         params = config()
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        cur.execute("SELECT * FROM books ORDER BY id")
+        cur.execute("SELECT * FROM books ORDER BY date_finished")
         row = cur.fetchone()
 
         while row is not None:
@@ -188,11 +188,15 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--author', '-a', help='Book author')
-    parser.add_argument('--title', '-t', help='Book author')
-    parser.add_argument('--finish', '-f', help='Finished [id]')
+    parser.add_argument('--title', '-t', help='Book title')
+    parser.add_argument('--finish', '-f', help='Finish [id], sets a books finished_date to today')
+    parser.add_argument('--delete', '-d', help='Delete [id]')
     args = parser.parse_args()
 
 
+    if args.delete is not None:
+        if isinstance(args.delete, str):
+            delete_book(args.delete)
     if args.finish is not None:
         if isinstance(args.finish, str):
             days = finish_book(args.finish)
@@ -203,4 +207,5 @@ if __name__ == '__main__':
 
     else:
         get_books()
+
 
